@@ -1,0 +1,17 @@
+[package]
+name = "parsec-se-driver"
+version = "0.1.0"
+authors = ["Paul Howard <paul.howard@arm.com>",
+           "Ionut Mihalcea <ionut.mihalcea@arm.com>",
+           "Hugues de Valon <hugues.devalon@arm.com>"]
+description = "Parsec Secure Element driver implementation"
+license = "Apache-2.0"
+repository = "https://github.com/parallaxsecond/parsec-se-driver"
+readme = "README.md"
+keywords = ["parsec"]
+categories = ["development-tools"]
+edition = "2018"
+documentation = "https://parallaxsecond.github.io/"
+
+[dependencies]
+parsec-client = "0.2.0"
