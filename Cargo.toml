@@ -13,5 +13,16 @@ categories = ["development-tools"]
 edition = "2018"
 documentation = "https://parallaxsecond.github.io/"
 
+# Currently this library hardcodes the provider and the authentication method choices:
+#   * provider is TPM
+#   * authentication is direct authentication
+[lib]
+name = "parsec_tpm_direct_se_driver"
+crate-type = ["cdylib", "staticlib"]
+
 [dependencies]
 parsec-client = "0.2.0"
+
+[build-dependencies]
+curl = "0.4.28"
+bindgen = "0.53.2"
