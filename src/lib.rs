@@ -52,17 +52,18 @@ use std::ptr;
 /// SE Driver implementation which hardcodes the provider (TPM) and the authentication method
 /// (direct authentication).
 #[no_mangle]
-pub static mut PARSEC_TPM_DIRECT_SE_DRIVER: psa_se_driver_bindings::psa_drv_se_t = psa_se_driver_bindings::psa_drv_se_t {
-    hal_version: psa_se_driver_bindings::PSA_DRV_SE_HAL_VERSION,
-    persistent_data_size: 0,
-    p_init: None,
-    key_management: ptr::null(),
-    mac: ptr::null(),
-    cipher: ptr::null(),
-    aead: ptr::null(),
-    asymmetric: ptr::null(),
-    derivation: ptr::null(),
-};
+pub static mut PARSEC_TPM_DIRECT_SE_DRIVER: psa_se_driver_bindings::psa_drv_se_t =
+    psa_se_driver_bindings::psa_drv_se_t {
+        hal_version: psa_se_driver_bindings::PSA_DRV_SE_HAL_VERSION,
+        persistent_data_size: 0,
+        p_init: None,
+        key_management: ptr::null(),
+        mac: ptr::null(),
+        cipher: ptr::null(),
+        aead: ptr::null(),
+        asymmetric: ptr::null(),
+        derivation: ptr::null(),
+    };
 
 #[test]
 fn it_works() {

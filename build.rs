@@ -31,11 +31,11 @@
 #![allow(clippy::multiple_crate_versions)]
 
 use curl::easy::Easy;
-use std::io::Write;
-use std::fs::File;
 use std::env;
-use std::process::Command;
+use std::fs::File;
+use std::io::Write;
 use std::io::{Error, ErrorKind, Result};
+use std::process::Command;
 
 // This is the name of the Mbed TLS tag name.
 const MBED_TLS_VERSION: &str = "mbedtls-2.22.0";
@@ -47,7 +47,10 @@ fn main() -> Result<()> {
     let mut mbed_tls = File::create(&path)?;
     let mut dst: Vec<u8> = Vec::new();
     let mut easy = Easy::new();
-    easy.url(&format!("https://github.com/ARMmbed/mbedtls/archive/{}.tar.gz", MBED_TLS_VERSION))?;
+    easy.url(&format!(
+        "https://github.com/ARMmbed/mbedtls/archive/{}.tar.gz",
+        MBED_TLS_VERSION
+    ))?;
     easy.follow_location(true)?;
     {
         let mut transfer = easy.transfer();
@@ -61,18 +64,19 @@ fn main() -> Result<()> {
     mbed_tls.write_all(&dst.clone())?;
 
     let status = Command::new("tar")
-            .arg("-C")
-            .arg(env::var("OUT_DIR").unwrap())
-            .arg("-xf")
-            .arg(&path)
-            .status()?;
+        .arg("-C")
+        .arg(env::var("OUT_DIR").unwrap())
+        .arg("-xf")
+        .arg(&path)
+        .status()?;
     if !status.success() {
         return Err(Error::new(ErrorKind::Other, "tar command failed"));
     }
 
     // Name of folder: OUT_DIR/mbedtls-mbedtls-2.22.0
 
-    let psa_include_dir = env::var("OUT_DIR").unwrap() + "/mbedtls-" + MBED_TLS_VERSION + "/include/psa/";
+    let psa_include_dir =
+        env::var("OUT_DIR").unwrap() + "/mbedtls-" + MBED_TLS_VERSION + "/include/psa/";
     let header = psa_include_dir.clone() + "crypto_se_driver.h";
 
     println!("cargo:rerun-if-changed={}", header);

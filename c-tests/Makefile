@@ -1,0 +1,16 @@
+# Copyright 2020 Contributors to the Parsec project.
+# SPDX-License-Identifier: Apache-2.0
+
+default: run
+
+main.o:
+	gcc -c -I../include -I../$(MBED_TLS_PATH)/include main.c
+
+test-app: main.o
+	gcc main.o -L../$(MBED_TLS_PATH)/library -L../target/debug -l:libparsec_tpm_direct_se_driver.a -l:libmbedcrypto.a -o test-app
+
+run: test-app
+	./test-app
+
+clean:
+	rm -rf test-app main.o
