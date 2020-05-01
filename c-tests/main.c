@@ -52,12 +52,15 @@ int main()
 	psa_set_key_type(&public_key_attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
 	psa_set_key_bits(&public_key_attributes, 1024U);
 
+	/*
+	 * To be activated, need to be executed inside the TPM Docker container
 	status = psa_register_se_driver(PARSEC_TPM_DIRECT_SE_DRIVER_LIFETIME,
 			&PARSEC_TPM_DIRECT_SE_DRIVER);
 	if (status != PSA_SUCCESS) {
 		printf("Register failed (status = %d)\n", status);
 		return 1;
 	}
+	*/
 
 	status = psa_crypto_init();
 	if (status != PSA_SUCCESS) {

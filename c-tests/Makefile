@@ -7,7 +7,7 @@ main.o:
 	gcc -Wall -c -I../include -I../$(MBED_TLS_PATH)/include main.c
 
 test-app: main.o
-	gcc -Wall main.o -L../$(MBED_TLS_PATH)/library -L../target/debug -l:libparsec_tpm_direct_se_driver.a -l:libmbedcrypto.a -o test-app
+	gcc -Wall -lm -pthread -ldl main.o -L../$(MBED_TLS_PATH)/library -L../target/debug -l:libparsec_tpm_direct_se_driver.a -l:libmbedcrypto.a -o test-app
 
 run: test-app
 	./test-app

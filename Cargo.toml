@@ -21,7 +21,10 @@ name = "parsec_tpm_direct_se_driver"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-parsec-client = "0.2.0"
+#parsec-client = "0.2.0"
+parsec-client = { version = "0.2.0", path = "../parsec-client-rust" }
+lazy_static = "1.4.0"
+uuid = "0.7.4"
 
 [build-dependencies]
 curl = "0.4.28"
