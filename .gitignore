@@ -1,5 +1,5 @@
 /target
 *patch
 Cargo.lock
-c-tests/*.o
+c-tests/main.o
 c-tests/test-app
