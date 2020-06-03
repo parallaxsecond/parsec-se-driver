@@ -3,10 +3,12 @@ name: Continuous Integration
 on: [push, pull_request]
 
 jobs:
-  build:
-    name: Build and check formatting
+  tpm-provider:
+    name: Integration tests using TPM provider
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Execute all tests
-        run: ./ci.sh
+      - name: Build the container
+        run: docker build -t tpm-provider ci
+      - name: Run the container to execute the test script
+        run: docker run -v $(pwd):/tmp/parsec-se-driver -w /tmp/parsec-se-driver tpm-provider /tmp/parsec-se-driver/ci/ci.sh

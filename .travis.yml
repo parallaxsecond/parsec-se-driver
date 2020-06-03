@@ -2,4 +2,4 @@
 arch: arm64
 language: rust
 script:
-  - ./ci.sh
+  - cargo build

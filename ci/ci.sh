@@ -32,14 +32,26 @@ RUST_BACKTRACE=1 cargo test
 ###########
 # C Tests #
 ###########
-# Build the driver
-cargo build
+
+# Install and start the TPM server and Parsec
+cargo install parsec-service --features tpm-provider
+tpm_server &
+sleep 5
+tpm2_startup -c -T mssim 2>/dev/null
+tpm2_changeauth -c owner tpm_pass 2>/dev/null
+parsec-service --config ci/config.toml
+sleep 5
+
 # Compile Mbed Crypto (use the one in OUT_DIR)
-MBED_TLS_PATH=`find target -name "mbedtls-mbedtls-*"`
-pushd $MBED_TLS_PATH
+git clone https://github.com/ARMmbed/mbedtls.git
+pushd mbedtls
 ./scripts/config.py crypto
 ./scripts/config.py set MBEDTLS_PSA_CRYPTO_SE_C
 make
 popd
+
+# Build the driver
+MBEDTLS_LIB_DIR=$(pwd)/mbedtls/build/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build
+
 # Compile and run the C application
-make -C c-tests run MBED_TLS_PATH=$MBED_TLS_PATH
+make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
