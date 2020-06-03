@@ -18,6 +18,9 @@ RUN cd tpm2-tools \
 	&& ./configure --enable-unit \
 	&& make install
 
+RUN apt-get update && apt-get -y install \
+	cmake
+
 # Install Rust toolchain
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
