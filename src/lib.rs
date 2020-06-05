@@ -33,29 +33,42 @@
 // This one is hard to avoid.
 #![allow(clippy::multiple_crate_versions)]
 
-#[allow(
-    non_snake_case,
-    non_camel_case_types,
-    non_upper_case_globals,
-    dead_code,
-    improper_ctypes,
-    missing_debug_implementations,
-    trivial_casts
-)]
-#[allow(clippy::all)]
-mod psa_se_driver_bindings {
-    include!(concat!(env!("OUT_DIR"), "/psa_se_driver_bindings.rs"));
-}
 mod asymmetric;
 mod key_management;
 
-use psa_se_driver_bindings::{
+use psa_crypto::ffi::{
     psa_drv_se_asymmetric_t, psa_drv_se_context_t, psa_drv_se_key_management_t, psa_drv_se_t,
-    psa_key_lifetime_t, psa_status_t, PSA_DRV_SE_HAL_VERSION,
+    psa_key_lifetime_t, psa_key_slot_number_t, psa_status_t, PSA_DRV_SE_HAL_VERSION,
+};
+use psa_crypto::ffi::{
+    PSA_ERROR_ALREADY_EXISTS,
+    PSA_ERROR_BAD_STATE,
+    PSA_ERROR_BUFFER_TOO_SMALL,
+    PSA_ERROR_COMMUNICATION_FAILURE,
+    PSA_ERROR_DOES_NOT_EXIST,
+    PSA_ERROR_GENERIC_ERROR,
+    //PSA_ERROR_DATA_CORRUPT,
+    //PSA_ERROR_DATA_INVALID,
+    PSA_ERROR_HARDWARE_FAILURE,
+    PSA_ERROR_INSUFFICIENT_DATA,
+    //PSA_ERROR_CORRUPTION_DETECTED,
+    PSA_ERROR_INSUFFICIENT_ENTROPY,
+    PSA_ERROR_INSUFFICIENT_MEMORY,
+    PSA_ERROR_INSUFFICIENT_STORAGE,
+    PSA_ERROR_INVALID_ARGUMENT,
+    PSA_ERROR_INVALID_HANDLE,
+    PSA_ERROR_INVALID_PADDING,
+    PSA_ERROR_INVALID_SIGNATURE,
+    PSA_ERROR_NOT_PERMITTED,
+    PSA_ERROR_NOT_SUPPORTED,
+    PSA_ERROR_STORAGE_FAILURE,
+    PSA_SUCCESS,
 };
 
 use lazy_static::lazy_static;
 use parsec_client::auth::AuthenticationData;
+use parsec_client::core::interface::requests::ResponseStatus;
+use parsec_client::error::Error;
 use parsec_client::BasicClient;
 use std::ptr;
 use std::sync::RwLock;
@@ -88,7 +101,8 @@ pub static mut PARSEC_TPM_DIRECT_SE_DRIVER: psa_drv_se_t = psa_drv_se_t {
 unsafe extern "C" fn p_init(
     _drv_context: *mut psa_drv_se_context_t,
     _persistent_data: *mut ::std::os::raw::c_void,
-    _lifetime: psa_key_lifetime_t,
+    //_location: psa_key_location_t,
+    _location: psa_key_lifetime_t,
 ) -> psa_status_t {
     let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
 
@@ -96,7 +110,7 @@ unsafe extern "C" fn p_init(
         Ok(providers) => providers,
         Err(e) => {
             eprintln!("error getting available providers: {:?}.", e);
-            return 1;
+            return PSA_ERROR_GENERIC_ERROR;
         }
     };
     let tpm_provider_uuid = Uuid::parse_str("1e4954a4-ff21-46d3-ab0c-661eeb667e1d").unwrap();
@@ -108,16 +122,52 @@ unsafe extern "C" fn p_init(
         Some(provider) => provider.id,
         None => {
             eprintln!("TPM provider not registered in the Parsec service.");
-            return 1;
+            return PSA_ERROR_GENERIC_ERROR;
         }
     };
 
     client.set_implicit_provider(provider_id);
 
-    0
+    PSA_SUCCESS
 }
 
-#[test]
-fn it_works() {
-    assert_eq!(2 + 2, 4);
+fn key_slot_to_key_name(key_slot: psa_key_slot_number_t) -> String {
+    format!("parsec-se-driver-key{}", key_slot)
+}
+
+fn client_error_to_psa_status(error: Error) -> psa_status_t {
+    match error {
+        Error::Service(ResponseStatus::Success) => PSA_SUCCESS,
+        Error::Service(ResponseStatus::PsaErrorGenericError) => PSA_ERROR_GENERIC_ERROR,
+        Error::Service(ResponseStatus::PsaErrorNotSupported) => PSA_ERROR_NOT_SUPPORTED,
+        Error::Service(ResponseStatus::PsaErrorNotPermitted) => PSA_ERROR_NOT_PERMITTED,
+        Error::Service(ResponseStatus::PsaErrorBufferTooSmall) => PSA_ERROR_BUFFER_TOO_SMALL,
+        Error::Service(ResponseStatus::PsaErrorAlreadyExists) => PSA_ERROR_ALREADY_EXISTS,
+        Error::Service(ResponseStatus::PsaErrorDoesNotExist) => PSA_ERROR_DOES_NOT_EXIST,
+        Error::Service(ResponseStatus::PsaErrorBadState) => PSA_ERROR_BAD_STATE,
+        Error::Service(ResponseStatus::PsaErrorInvalidArgument) => PSA_ERROR_INVALID_ARGUMENT,
+        Error::Service(ResponseStatus::PsaErrorInsufficientMemory) => PSA_ERROR_INSUFFICIENT_MEMORY,
+        Error::Service(ResponseStatus::PsaErrorInsufficientStorage) => {
+            PSA_ERROR_INSUFFICIENT_STORAGE
+        }
+        Error::Service(ResponseStatus::PsaErrorCommunicationFailure) => {
+            PSA_ERROR_COMMUNICATION_FAILURE
+        }
+        Error::Service(ResponseStatus::PsaErrorStorageFailure) => PSA_ERROR_STORAGE_FAILURE,
+        //Error::Service(ResponseStatus::PsaErrorDataCorrupt) => PSA_ERROR_DATA_CORRUPT,
+        //Error::Service(ResponseStatus::PsaErrorDataInvalid) => PSA_ERROR_DATA_INVALID,
+        Error::Service(ResponseStatus::PsaErrorHardwareFailure) => PSA_ERROR_HARDWARE_FAILURE,
+        //Error::Service(ResponseStatus::PsaErrorCorruptionDetected) => PSA_ERROR_CORRUPTION_DETECTED,
+        Error::Service(ResponseStatus::PsaErrorInsufficientEntropy) => {
+            PSA_ERROR_INSUFFICIENT_ENTROPY
+        }
+        Error::Service(ResponseStatus::PsaErrorInvalidSignature) => PSA_ERROR_INVALID_SIGNATURE,
+        Error::Service(ResponseStatus::PsaErrorInvalidPadding) => PSA_ERROR_INVALID_PADDING,
+        Error::Service(ResponseStatus::PsaErrorInsufficientData) => PSA_ERROR_INSUFFICIENT_DATA,
+        Error::Service(ResponseStatus::PsaErrorInvalidHandle) => PSA_ERROR_INVALID_HANDLE,
+        e => {
+            eprintln!("Conversion of {:?} to PSA_ERROR_GENERIC_ERROR.", e);
+            PSA_ERROR_GENERIC_ERROR
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /target
 *patch
 Cargo.lock
-c-tests/*.o
-c-tests/*.psa_its
-c-tests/test-app
+ci/c-tests/*.o
+ci/c-tests/*.psa_its
+ci/c-tests/test-app
