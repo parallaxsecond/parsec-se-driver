@@ -43,8 +43,8 @@ sleep 5
 # Install and run Parsec
 git clone https://github.com/parallaxsecond/parsec
 pushd parsec
-cargo build --features tpm-provider
-./target/debug/parsec -c ../ci/config.toml &
+cargo build --features tpm-provider --release
+./target/release/parsec -c ../ci/config.toml &
 sleep 5
 popd
 
@@ -59,7 +59,7 @@ popd
 
 # Build the driver, clean before to force dynamic linking
 cargo clean
-MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build
+MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 
 # Compile and run the C application
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
