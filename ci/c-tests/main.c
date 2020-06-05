@@ -21,9 +21,9 @@ int main()
 	psa_key_id_t key_pair_id = 1;
 	psa_key_handle_t key_pair_handle;
 	psa_key_id_t public_key_id = 2;
-	psa_key_handle_t public_key_handle;
+	//psa_key_handle_t public_key_handle;
 	psa_algorithm_t alg;
-	uint8_t public_key[PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(1024)] = {0};
+	uint8_t public_key[PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(256)] = {0};
 	//uint8_t public_key[PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, 1024U)] = {0};
 	size_t public_key_length = 0;
 	// "Les carottes sont cuites" hased with SHA256
@@ -34,7 +34,7 @@ int main()
 	//uint8_t signature[PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, 1024U, alg)] = {0};
 	size_t signature_length = 0;
 
-	alg = PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256);
+	alg = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
 
 	// To be activated, need to be executed inside the TPM Docker container
 	status = psa_register_se_driver(PSA_KEY_LIFETIME_GET_LOCATION(PARSEC_TPM_DIRECT_SE_DRIVER_LIFETIME),
@@ -55,16 +55,16 @@ int main()
 	psa_set_key_lifetime(&key_pair_attributes, PARSEC_TPM_DIRECT_SE_DRIVER_LIFETIME);
 	psa_set_key_usage_flags(&key_pair_attributes, PSA_KEY_USAGE_SIGN_HASH | PSA_KEY_USAGE_VERIFY_HASH);
 	psa_set_key_algorithm(&key_pair_attributes, alg);
-	psa_set_key_type(&key_pair_attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
-	psa_set_key_bits(&key_pair_attributes, 1024U);
+	psa_set_key_type(&key_pair_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP_R1));
+	psa_set_key_bits(&key_pair_attributes, 256U);
 
 	psa_key_attributes_t public_key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_set_key_id(&public_key_attributes, public_key_id);
 	psa_set_key_lifetime(&public_key_attributes, PARSEC_TPM_DIRECT_SE_DRIVER_LIFETIME);
 	psa_set_key_usage_flags(&public_key_attributes, PSA_KEY_USAGE_VERIFY_HASH);
 	psa_set_key_algorithm(&public_key_attributes, alg);
-	psa_set_key_type(&public_key_attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
-	psa_set_key_bits(&public_key_attributes, 1024U);
+	psa_set_key_type(&public_key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP_R1));
+	psa_set_key_bits(&public_key_attributes, 256U);
 
 	status = psa_generate_key(&key_pair_attributes, &key_pair_handle);
 	if (status != PSA_SUCCESS) {
@@ -74,13 +74,14 @@ int main()
 
 	status = psa_export_public_key(key_pair_handle,
 			public_key,
-			PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(1024),
+			sizeof(public_key),
 			&public_key_length);
 	if (status != PSA_SUCCESS) {
 		printf("Exporting public key failed (status = %d)\n", status);
 		return 1;
 	}
 
+	/*
 	status = psa_import_key(&public_key_attributes,
 			public_key,
 			public_key_length,
@@ -89,11 +90,12 @@ int main()
 		printf("Importing key failed (status = %d)\n", status);
 		return 1;
 	}
+	*/
 
 	status = psa_sign_hash(key_pair_handle,
 			alg,
 			hash,
-			32,
+			sizeof(hash),
 			signature,
 			//PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, 1024U, alg),
 			PSA_SIGNATURE_MAX_SIZE,
@@ -103,10 +105,10 @@ int main()
 		return 1;
 	}
 
-	status = psa_verify_hash(public_key_handle,
+	status = psa_verify_hash(key_pair_handle,
 			alg,
 			hash,
-			32,
+			sizeof(hash),
 			signature,
 			signature_length);
 	if (status != PSA_SUCCESS) {
@@ -120,11 +122,13 @@ int main()
 		return 1;
 	}
 
+	/*
 	status = psa_destroy_key(public_key_handle);
 	if (status != PSA_SUCCESS) {
 		printf("Key destruction failed for Public Key (status = %d)\n", status);
 		return 1;
 	}
+	*/
 
 	return 0;
 }

@@ -10,14 +10,24 @@ a `psa_drv_se_t` structure.
 
 ## How to build and use the driver
 
-To build you need `tar` and `libclang`:
+When being built, this driver needs to dynamically link with your PSA Crypto
+API implementation that is going to register it.  You need to specify the
+location of libmbedcrypto.so and the `psa/` header files folder with the
+environment variable `MBEDTLS_LIB_DIR` and `MBEDTLS_INCLUDE_DIR`. For example
+if the `mbedtls` project is on the same directory:
+
 ```bash
-$ cargo build
+$ MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build
 ```
-will produce `libparsec_tpm_direct_se_driver.a` (and `.so`) in `target/debug` or `target/release`.
-This library contains the `psa_drv_se_t` symbol defined in the `include/parsec_se_driver.h` file.
-That header file should be included under the same include directory than the PSA `psa/crypto.h`
+
+This will produce `libparsec_tpm_direct_se_driver.a` (and `.so`) in
+`target/debug` or `target/release`.  This library contains the `psa_drv_se_t`
+symbol defined in the `include/parsec_se_driver.h` file.  That header file
+should be included under the same include directory than the PSA `psa/crypto.h`
 file coming from the PSA Cryptography API implementation.
+
+The build scripts have a dependency on `libclang`, which is needed on the
+system.
 
 ## Notice
 
