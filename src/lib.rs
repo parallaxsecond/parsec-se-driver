@@ -66,6 +66,7 @@ use psa_crypto::ffi::{
 };
 
 use lazy_static::lazy_static;
+use log::error;
 use parsec_client::auth::AuthenticationData;
 use parsec_client::core::interface::requests::ResponseStatus;
 use parsec_client::error::Error;
@@ -105,10 +106,13 @@ unsafe extern "C" fn p_init(
 ) -> psa_status_t {
     let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
 
+    #[cfg(logging)]
+    env_logger::init();
+
     let providers = match client.list_providers() {
         Ok(providers) => providers,
         Err(e) => {
-            eprintln!("error getting available providers: {:?}.", e);
+            error!("error getting available providers: {:?}.", e);
             return PSA_ERROR_GENERIC_ERROR;
         }
     };
@@ -120,7 +124,7 @@ unsafe extern "C" fn p_init(
     {
         Some(provider) => provider.id,
         None => {
-            eprintln!("TPM provider not registered in the Parsec service.");
+            error!("TPM provider not registered in the Parsec service.");
             return PSA_ERROR_GENERIC_ERROR;
         }
     };
@@ -165,7 +169,7 @@ fn client_error_to_psa_status(error: Error) -> psa_status_t {
         Error::Service(ResponseStatus::PsaErrorInsufficientData) => PSA_ERROR_INSUFFICIENT_DATA,
         Error::Service(ResponseStatus::PsaErrorInvalidHandle) => PSA_ERROR_INVALID_HANDLE,
         e => {
-            eprintln!("Conversion of {:?} to PSA_ERROR_GENERIC_ERROR.", e);
+            error!("Conversion of {:?} to PSA_ERROR_GENERIC_ERROR.", e);
             PSA_ERROR_GENERIC_ERROR
         }
     }
