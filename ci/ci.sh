@@ -51,7 +51,7 @@ popd
 # Compile Mbed Crypto
 git clone https://github.com/ARMmbed/mbedtls.git
 pushd mbedtls
-git checkout a7f6d25e12158f0062bc0e2cf994fafe5daf2e68
+git checkout mbedtls-2.22.0
 ./scripts/config.py crypto
 ./scripts/config.py set MBEDTLS_PSA_CRYPTO_SE_C
 SHARED=1 make

@@ -1,5 +1,5 @@
 [core_settings]
-log_level = "info"
+log_level = "trace"
 # The CI already timestamps the logs
 log_timestamp = false
 

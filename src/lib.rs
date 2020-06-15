@@ -38,7 +38,7 @@ mod key_management;
 
 use psa_crypto::ffi::{
     psa_drv_se_asymmetric_t, psa_drv_se_context_t, psa_drv_se_key_management_t, psa_drv_se_t,
-    psa_key_location_t, psa_key_slot_number_t, psa_status_t, PSA_DRV_SE_HAL_VERSION,
+    psa_key_lifetime_t, psa_key_slot_number_t, psa_status_t, PSA_DRV_SE_HAL_VERSION,
 };
 use psa_crypto::ffi::{
     PSA_ERROR_ALREADY_EXISTS,
@@ -102,12 +102,14 @@ pub static mut PARSEC_TPM_DIRECT_SE_DRIVER: psa_drv_se_t = psa_drv_se_t {
 unsafe extern "C" fn p_init(
     _drv_context: *mut psa_drv_se_context_t,
     _persistent_data: *mut ::std::os::raw::c_void,
-    _location: psa_key_location_t,
+    _location: psa_key_lifetime_t,
 ) -> psa_status_t {
     let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
 
     #[cfg(logging)]
     env_logger::init();
+
+    log::info!("SE Driver initialization");
 
     let providers = match client.list_providers() {
         Ok(providers) => providers,

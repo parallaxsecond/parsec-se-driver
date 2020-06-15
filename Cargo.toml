@@ -28,6 +28,11 @@ psa-crypto = "0.1.0"
 log = "0.4.8"
 env_logger = { version = "0.7.1", optional = true }
 
+# Use a revision of psa-crypto-sys that is linkable with Mbed TLS 2.22.0 until a next
+# version is updated.
+[patch.crates-io]
+psa-crypto-sys = { git = 'https://github.com/parallaxsecond/rust-psa-crypto', rev = "b8e1d736cb8f27d275d266a0b833504cde660956" }
+
 [build-dependencies]
 curl = "0.4.28"
 bindgen = "0.53.2"

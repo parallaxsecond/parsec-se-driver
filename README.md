@@ -29,6 +29,9 @@ file coming from the PSA Cryptography API implementation.
 The build scripts have a dependency on `libclang`, which is needed on the
 system.
 
+The driver has only been tested with Mbed Crypto from the GitHub Mbed TLS repository version
+2.22.0.
+
 ## Notice
 
 This implementation is currently work-in-progress and might not implement all operations or
@@ -37,7 +40,6 @@ parameters of the HAL.
 The driver produced currently hardcodes the following parameters:
 * it uses the TPM provider
 * it uses direct authentication
-* it expects the Mbed Crypto implementation from Mbed TLS version `MBED_TLS_VERSION` in `build.rs`
 
 ## License
 
