@@ -52,11 +52,10 @@ unsafe extern "C" fn p_import(
         Ok(alg) => alg,
         Err(e) => return e.into(),
     };
-    let key_material = std::slice::from_raw_parts(data, data_length).to_vec();
     *bits = attributes.bits;
     match PARSEC_BASIC_CLIENT.read().unwrap().psa_import_key(
         key_slot_to_key_name(key_slot),
-        key_material,
+        std::slice::from_raw_parts(data, data_length),
         attributes,
     ) {
         Ok(_) => PSA_SUCCESS,

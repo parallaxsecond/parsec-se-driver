@@ -40,6 +40,9 @@ tpm2_startup -c -T mssim 2>/dev/null
 tpm2_changeauth -c owner -T mssim tpm_pass 2>/dev/null
 sleep 5
 
+# Create the Parsec socket directory
+mkdir /tmp/parsec
+
 # Install and run Parsec
 git clone https://github.com/parallaxsecond/parsec
 pushd parsec
@@ -59,7 +62,8 @@ popd
 
 # Build the driver, clean before to force dynamic linking
 cargo clean
-MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
+# Remove the socket permission check on the CI to not have to setup the service properly
+MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --features parsec-client/no-fs-permission-check --release
 
 # Compile and run the C application
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
