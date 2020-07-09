@@ -2,4 +2,15 @@
 arch: arm64
 language: rust
 script:
-  - cargo build
+# Compile Mbed Crypto for the test application
+  - git clone https://github.com/ARMmbed/mbedtls.git
+  - pushd mbedtls
+  - git checkout mbedtls-2.22.0
+  - ./scripts/config.py crypto
+  - ./scripts/config.py set MBEDTLS_PSA_CRYPTO_SE_C
+  - SHARED=1 make
+  - popd
+# Build the driver, clean before to force dynamic linking
+  - cargo clean
+# Remove the socket permission check on the CI to not have to setup the service properly
+  - MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build

@@ -8,10 +8,11 @@
 
 set -euf -o pipefail
 
-################
-# Build client #
-################
-RUST_BACKTRACE=1 cargo build
+# Clippy needs the build to work, the include directory need to be available.
+git clone https://github.com/ARMmbed/mbedtls.git
+pushd mbedtls
+git checkout mbedtls-2.22.0
+popd
 
 #################
 # Static checks #
@@ -21,13 +22,8 @@ if cargo fmt -h; then
 	cargo fmt --all -- --check
 fi
 if cargo clippy -h; then
-	cargo clippy --all-targets -- -D clippy::all -D clippy::cargo
+	MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo clippy --all-targets -- -D clippy::all -D clippy::cargo
 fi
-
-#############
-# Run tests #
-#############
-RUST_BACKTRACE=1 cargo test
 
 ###########
 # C Tests #
@@ -51,10 +47,8 @@ cargo build --features tpm-provider --release
 sleep 5
 popd
 
-# Compile Mbed Crypto
-git clone https://github.com/ARMmbed/mbedtls.git
+# Compile Mbed Crypto for the test application
 pushd mbedtls
-git checkout mbedtls-2.22.0
 ./scripts/config.py crypto
 ./scripts/config.py set MBEDTLS_PSA_CRYPTO_SE_C
 SHARED=1 make
@@ -63,7 +57,7 @@ popd
 # Build the driver, clean before to force dynamic linking
 cargo clean
 # Remove the socket permission check on the CI to not have to setup the service properly
-MBEDTLS_LIB_DIR=$(pwd)/mbedtls/library MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --features parsec-client/no-fs-permission-check --release
+MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --features parsec-client/no-fs-permission-check --release
 
 # Compile and run the C application
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
