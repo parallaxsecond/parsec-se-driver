@@ -38,7 +38,7 @@ mod key_management;
 
 use psa_crypto::ffi::{
     psa_drv_se_asymmetric_t, psa_drv_se_context_t, psa_drv_se_key_management_t, psa_drv_se_t,
-    psa_key_lifetime_t, psa_key_slot_number_t, psa_status_t, PSA_DRV_SE_HAL_VERSION,
+    psa_key_lifetime_t, psa_key_slot_number_t, psa_status_t,
 };
 use psa_crypto::ffi::{
     PSA_ERROR_ALREADY_EXISTS,
@@ -87,11 +87,10 @@ lazy_static! {
     };
 }
 
-/// SE Driver implementation which hardcodes the provider (TPM) and the authentication method
-/// (direct authentication).
+/// SE Driver implementation which hardcodes the authentication method (direct authentication).
 #[no_mangle]
-pub static mut PARSEC_TPM_DIRECT_SE_DRIVER: psa_drv_se_t = psa_drv_se_t {
-    hal_version: PSA_DRV_SE_HAL_VERSION,
+pub static mut PARSEC_SE_DRIVER: psa_drv_se_t = psa_drv_se_t {
+    hal_version: 5,
     persistent_data_size: 0,
     p_init: Some(p_init),
     key_management: &key_management::METHODS as *const psa_drv_se_key_management_t,
@@ -109,7 +108,7 @@ unsafe extern "C" fn p_init(
 ) -> psa_status_t {
     let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
 
-    #[cfg(logging)]
+    #[cfg(feature = "logging")]
     env_logger::init();
 
     log::info!("SE Driver initialization");
@@ -123,15 +122,21 @@ unsafe extern "C" fn p_init(
             return PSA_ERROR_GENERIC_ERROR;
         }
     };
-    let tpm_provider_uuid = Uuid::parse_str("1e4954a4-ff21-46d3-ab0c-661eeb667e1d").unwrap();
-    let provider_id = match providers
-        .iter()
-        .filter(|p| p.uuid == tpm_provider_uuid)
-        .last()
-    {
+    let provider_id = match providers.iter().find(|p| {
+        if cfg!(feature = "tpm") {
+            // Only keep the TPM provider.
+            p.uuid == Uuid::parse_str("1e4954a4-ff21-46d3-ab0c-661eeb667e1d").unwrap()
+        } else if cfg!(feature = "pkcs11") {
+            // Only keep the PKCS11 provider.
+            p.uuid == Uuid::parse_str("30e39502-eba6-4d60-a4af-c518b7f5e38f").unwrap()
+        } else {
+            // Filter the Core provider.
+            p.uuid != Uuid::parse_str("47049873-2a43-4845-9d72-831eab668784").unwrap()
+        }
+    }) {
         Some(provider) => provider.id,
         None => {
-            error!("TPM provider not registered in the Parsec service.");
+            error!("The SE Driver could not find any suitable Parsec provider.");
             return PSA_ERROR_GENERIC_ERROR;
         }
     };
