@@ -109,7 +109,8 @@ unsafe extern "C" fn p_init(
     let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
 
     #[cfg(feature = "logging")]
-    env_logger::init();
+    // Ignore if the initialisation failed because the `p_init` function has already been called.
+    let _ = env_logger::try_init();
 
     log::info!("SE Driver initialization");
 
