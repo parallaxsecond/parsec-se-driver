@@ -68,6 +68,7 @@ use psa_crypto::ffi::{
 use lazy_static::lazy_static;
 use log::error;
 use parsec_client::auth::AuthenticationData;
+use parsec_client::core::interface::operations::list_providers::Uuid;
 use parsec_client::core::interface::requests::ResponseStatus;
 use parsec_client::core::secrecy::Secret;
 use parsec_client::error::Error;
@@ -75,7 +76,6 @@ use parsec_client::BasicClient;
 use std::ptr;
 use std::sync::RwLock;
 use std::time::Duration;
-use uuid::Uuid;
 
 lazy_static! {
     static ref PARSEC_BASIC_CLIENT: RwLock<BasicClient> = {

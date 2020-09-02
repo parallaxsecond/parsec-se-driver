@@ -2,6 +2,11 @@
 log_level = "trace"
 # The CI already timestamps the logs
 log_timestamp = false
+log_error_details = true
+
+# The container runs the Parsec service as root, so make sure we disable root
+# checks.
+allow_root = true
 
 [listener]
 listener_type = "DomainSocket"
