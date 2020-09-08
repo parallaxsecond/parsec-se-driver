@@ -40,9 +40,9 @@ sleep 5
 mkdir /tmp/parsec
 
 # Install and run Parsec
-git clone https://github.com/parallaxsecond/parsec
+git clone --branch 0.4.0 https://github.com/parallaxsecond/parsec
 pushd parsec
-cargo build --features tpm-provider --release
+cargo build --features "tpm-provider, no-parsec-user-and-clients-group" --release
 ./target/release/parsec -c ../ci/config.toml &
 sleep 5
 popd
