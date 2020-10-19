@@ -18,14 +18,14 @@ name = "parsec_se_driver"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-parsec-client = "0.9.0"
+parsec-client = { git = "https://github.com/parallaxsecond/parsec-client-rust/", rev = "3f7dfc7bd06bea7cb3aa38cdcb270af7b8899f89" }
 lazy_static = "1.4.0"
 psa-crypto = { version = "0.5.1", default-features = false, features = ["interface"] }
 log = "0.4.11"
 env_logger = { version = "0.7.1", optional = true }
 
 [patch.crates-io]
-psa-crypto = { git = 'https://github.com/parallaxsecond/rust-psa-crypto' }
+psa-crypto = { git = 'https://github.com/parallaxsecond/rust-psa-crypto', rev = "a1647d64e19e6e46baad708b84c2b5d0d3b543c7" }
 
 [features]
 default = ["logging"]
