@@ -67,10 +67,8 @@ use psa_crypto::ffi::{
 
 use lazy_static::lazy_static;
 use log::error;
-use parsec_client::auth::AuthenticationData;
 use parsec_client::core::interface::operations::list_providers::Uuid;
 use parsec_client::core::interface::requests::ResponseStatus;
-use parsec_client::core::secrecy::Secret;
 use parsec_client::error::Error;
 use parsec_client::BasicClient;
 use std::ptr;
@@ -78,13 +76,7 @@ use std::sync::RwLock;
 use std::time::Duration;
 
 lazy_static! {
-    static ref PARSEC_BASIC_CLIENT: RwLock<BasicClient> = {
-        let app_auth_data =
-            AuthenticationData::AppIdentity(Secret::new(String::from("Parsec SE Driver")));
-        let client = BasicClient::new(app_auth_data);
-
-        RwLock::new(client)
-    };
+    static ref PARSEC_BASIC_CLIENT: RwLock<BasicClient> = RwLock::new(BasicClient::new_naked());
 }
 
 /// SE Driver implementation which hardcodes the authentication method (direct authentication).
@@ -115,6 +107,11 @@ unsafe extern "C" fn p_init(
     log::info!("SE Driver initialization");
 
     client.set_timeout(Some(Duration::new(5, 0)));
+
+    if let Err(e) = client.set_default_auth(Some(String::from("Parsec SE Driver"))) {
+        error!("Error setting the default authentication method ({}).", e);
+        return PSA_ERROR_GENERIC_ERROR;
+    }
 
     let providers = match client.list_providers() {
         Ok(providers) => providers,

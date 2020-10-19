@@ -14,9 +14,13 @@ listener_type = "DomainSocket"
 # that the service does not hang for very big values of body or authentication length.
 timeout = 3000 # in milliseconds
 
+[authenticator]
+auth_type = "UnixPeerCredentials"
+
 [[key_manager]]
 name = "on-disk-manager"
 manager_type = "OnDisk"
+store_path = "/tmp/mappings"
 
 [[provider]]
 provider_type = "Tpm"

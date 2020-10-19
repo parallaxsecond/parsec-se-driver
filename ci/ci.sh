@@ -9,7 +9,10 @@
 set -euf -o pipefail
 
 # Clippy needs the build to work, the include directory need to be available.
-git clone https://github.com/ARMmbed/mbedtls.git
+if [ ! -d "mbedtls" ]
+then
+	git clone https://github.com/ARMmbed/mbedtls.git
+fi
 pushd mbedtls
 git checkout mbedtls-2.22.0
 popd
@@ -36,13 +39,14 @@ tpm2_startup -c -T mssim 2>/dev/null
 tpm2_changeauth -c owner -T mssim tpm_pass 2>/dev/null
 sleep 5
 
-# Create the Parsec socket directory
-mkdir /tmp/parsec
+# Create the Parsec socket directory. This must be the default one.
+mkdir /run/parsec
 
 # Install and run Parsec
-git clone --branch 0.4.0 https://github.com/parallaxsecond/parsec
+git clone https://github.com/parallaxsecond/parsec
 pushd parsec
-cargo build --features "tpm-provider, no-parsec-user-and-clients-group" --release
+git checkout 306c4faa0266ae315abd8633119e5bf42d199433
+cargo build --features tpm-provider --release
 ./target/release/parsec -c ../ci/config.toml &
 sleep 5
 popd
@@ -57,7 +61,7 @@ popd
 # Build the driver, clean before to force dynamic linking
 cargo clean
 # Remove the socket permission check on the CI to not have to setup the service properly
-MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --features parsec-client/no-fs-permission-check --release
+MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 
 # Compile and run the C application
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
