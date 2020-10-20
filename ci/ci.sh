@@ -43,9 +43,8 @@ sleep 5
 mkdir /run/parsec
 
 # Install and run Parsec
-git clone https://github.com/parallaxsecond/parsec
+git clone --branch 0.6.0 https://github.com/parallaxsecond/parsec
 pushd parsec
-git checkout 306c4faa0266ae315abd8633119e5bf42d199433
 cargo build --features tpm-provider --release
 ./target/release/parsec -c ../ci/config.toml &
 sleep 5
@@ -60,7 +59,6 @@ popd
 
 # Build the driver, clean before to force dynamic linking
 cargo clean
-# Remove the socket permission check on the CI to not have to setup the service properly
 MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 
 # Compile and run the C application

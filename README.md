@@ -37,28 +37,25 @@ system.
 The driver has only been tested with Mbed Crypto from the GitHub Mbed TLS repository version
 2.22.0.
 
+The current version of this SE driver (`0.4.0`) is compatible with Parsec version `0.6.0`.
+For compatibility of older versions, check which Parsec service version was used in the `ci/ci.sh`
+script for those SE driver versions.
+
 ## Notice
 
 This implementation is currently work-in-progress and might not implement all operations or
 parameters of the HAL.
 
-The driver produced currently uses direct authentication with Parsec. The
+The driver produced currently uses Parsec default authentication method.
+If Parsec is using the Direct authenticator, the
 application name of requests made to Parsec by this SE driver will be "Parsec
-SE Driver". Make sure to check the
+SE Driver".
+
+Make sure to check the
 [Parsec](https://parallaxsecond.github.io/parsec-book/threat_model/threat_model.html)
 and [Parsec Rust
 Client](https://parallaxsecond.github.io/parsec-book/threat_model/rust_client_threat_model.html)
 threat models to make sure that your use-case is secure.
-
-## Testing
-
-The Parsec Client used by the SE Driver will make filesystem permission checks on the Parsec
-socket. During testing, to not have to set up the correct secure Parsec environment, pass
-the `no-fs-permission-check` feature to `parsec-client`:
-
-```bash
-MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --features parsec-client/no-fs-permission-check
-```
 
 ## License
 
