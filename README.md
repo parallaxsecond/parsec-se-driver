@@ -34,8 +34,9 @@ If both features are enabled, the `tpm` one will take precedence.
 The build scripts have a dependency on `libclang`, which is needed on the
 system.
 
-The driver has only been tested with Mbed Crypto from the GitHub Mbed TLS repository version
-2.22.0.
+The driver has been tested with Mbed Crypto from the GitHub Mbed TLS repository version
+2.22.0 and 2.25.0. Mbed TLS 2.25.0 fixes BDSA-2020-2270 (CVE-2020-16150). You should always
+use the latest Mbed TLS release officially available.
 
 The current version of this SE driver (`0.4.0`) is compatible with Parsec version `0.6.0`.
 For compatibility of older versions, check which Parsec service version was used in the `ci/ci.sh`

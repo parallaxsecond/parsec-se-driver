@@ -14,7 +14,7 @@ then
 	git clone https://github.com/ARMmbed/mbedtls.git
 fi
 pushd mbedtls
-git checkout mbedtls-2.22.0
+git checkout mbedtls-2.25.0
 popd
 
 #################
