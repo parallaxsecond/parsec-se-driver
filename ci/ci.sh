@@ -63,3 +63,11 @@ MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 
 # Compile and run the C application
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
+
+# Check that Parsec was called by checking if the service contains the key
+# this is done by checking if the mappings folder is empty.
+# Maybe use parsec-tool instead?
+[ "$(ls -A /tmp/mappings)" ]
+
+# Kill Parsec for clean logs
+pkill parsec
