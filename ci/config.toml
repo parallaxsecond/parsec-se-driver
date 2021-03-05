@@ -20,6 +20,7 @@ auth_type = "UnixPeerCredentials"
 [[key_manager]]
 name = "on-disk-manager"
 manager_type = "OnDisk"
+# Warning: this path is used in the CI script
 store_path = "/tmp/mappings"
 
 [[provider]]
