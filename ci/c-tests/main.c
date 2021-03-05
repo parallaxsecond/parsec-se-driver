@@ -33,7 +33,8 @@ int main()
 	alg = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
 
 	// To be activated, need to be executed inside the TPM Docker container
-	status = psa_register_se_driver(PARSEC_SE_DRIVER_LIFETIME,
+	// PSA_KEY_LOCATION_PRIMARY_SECURE_ELEMENT is not defined in 2.25.0
+	status = psa_register_se_driver((psa_key_location_t)0x000001,
 			&PARSEC_SE_DRIVER);
 	if (status != PSA_SUCCESS) {
 		printf("Register failed (status = %d)\n", status);
@@ -48,7 +49,8 @@ int main()
 
 	psa_key_attributes_t key_pair_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_set_key_id(&key_pair_attributes, key_pair_id);
-	psa_set_key_lifetime(&key_pair_attributes, PARSEC_SE_DRIVER_LIFETIME);
+	psa_set_key_lifetime(&key_pair_attributes,
+			             PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(PSA_KEY_PERSISTENCE_DEFAULT, (psa_key_location_t)0x000001));
 	psa_set_key_usage_flags(&key_pair_attributes, PSA_KEY_USAGE_SIGN_HASH | PSA_KEY_USAGE_VERIFY_HASH);
 	psa_set_key_algorithm(&key_pair_attributes, alg);
 	psa_set_key_type(&key_pair_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP_R1));

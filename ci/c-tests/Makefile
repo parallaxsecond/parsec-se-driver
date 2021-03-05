@@ -10,7 +10,7 @@ test-app: main.o
 	gcc -Wall -o test-app main.o -L$(MBED_TLS_PATH)/library -L../../target/release -l:libparsec_se_driver.a -lmbedcrypto -lm -pthread -ldl
 
 run: test-app
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MBED_TLS_PATH)/library ./test-app
+	RUST_LOG=info LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MBED_TLS_PATH)/library ./test-app
 
 clean:
 	rm -rf test-app main.o
