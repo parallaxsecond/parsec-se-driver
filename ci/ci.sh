@@ -14,7 +14,7 @@ then
 	git clone https://github.com/ARMmbed/mbedtls.git
 fi
 pushd mbedtls
-git checkout mbedtls-2.22.0
+git checkout mbedtls-2.25.0
 popd
 
 #################
@@ -59,6 +59,11 @@ popd
 
 # Build the driver, clean before to force dynamic linking
 cargo clean
+# Cross-compilation targets
+rustup target add armv7-unknown-linux-gnueabihf
+rustup target add aarch64-unknown-linux-gnu
+MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release --target armv7-unknown-linux-gnueabihf
+MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release --target aarch64-unknown-linux-gnu
 MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 
 # Compile and run the C application

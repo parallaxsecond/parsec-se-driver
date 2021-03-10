@@ -20,24 +20,20 @@ directory:
 $ MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build
 ```
 
-This will produce `libparsec_se_driver.a` (and `.so`) in
+This will produce `libparsec_se_driver.a` in
 `target/debug` or `target/release`.  This library contains the `psa_drv_se_t`
 symbol defined in the `include/parsec_se_driver.h` file.  That header file
 should be included under the same include directory than the PSA `psa/crypto.h`
 file coming from the PSA Cryptography API implementation.
 
-By default, this SE Driver will make its requests using the Parsec Provider
-with the highest priority. If you would like it to always select a specific provider,
-use the `pkcs11` feature for the PKCS11 provider or the `tpm` feature for the TPM provider.
-If both features are enabled, the `tpm` one will take precedence.
-
 The build scripts have a dependency on `libclang`, which is needed on the
 system.
 
-The driver has only been tested with Mbed Crypto from the GitHub Mbed TLS repository version
-2.22.0.
+Version `0.4.0` of this SE driver is compatible with Parsec version `0.6.0` and has
+been tested with Mbed Crypto from the GitHub Mbed TLS repository version 2.22.0.
+Version `0.5.0` of this SE driver is compatible with Parsec version `0.6.0` and has
+been tested with Mbed Crypto from the GitHub Mbed TLS repository version 2.25.0.
 
-The current version of this SE driver (`0.4.0`) is compatible with Parsec version `0.6.0`.
 For compatibility of older versions, check which Parsec service version was used in the `ci/ci.sh`
 script for those SE driver versions.
 

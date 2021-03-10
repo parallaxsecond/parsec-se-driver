@@ -18,8 +18,10 @@ RUN cd tpm2-tools \
 	&& ./configure --enable-unit \
 	&& make install
 
-RUN apt-get update && apt-get -y install \
-	cmake
+RUN apt update && apt -y install cmake
+RUN apt -y install gcc-multilib
+RUN apt -y install gcc-arm-linux-gnueabihf
+RUN apt -y install gcc-aarch64-linux-gnu
 
 # Install Rust toolchain
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
