@@ -6,7 +6,7 @@
 # Continuous Integration test script, executed by GitHub Actions on x86 and
 # Travis CI on Arm64.
 
-set -euf -o pipefail
+set -xeuf -o pipefail
 
 # Clippy needs the build to work, the include directory need to be available.
 if [ ! -d "mbedtls" ]
@@ -35,8 +35,8 @@ fi
 # Start the TPM server
 tpm_server &
 sleep 5
-tpm2_startup -c -T mssim 2>/dev/null
-tpm2_changeauth -c owner -T mssim tpm_pass 2>/dev/null
+tpm2_startup -c 2>/dev/null
+tpm2_takeownership -o tpm_pass 2>/dev/null
 sleep 5
 
 # Create the Parsec socket directory. This must be the default one.

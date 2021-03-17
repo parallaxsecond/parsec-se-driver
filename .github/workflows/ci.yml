@@ -8,7 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Build the container
-        run: docker build -t tpm-provider ci
       - name: Run the container to execute the test script
-        run: docker run -v $(pwd):/tmp/parsec-se-driver -w /tmp/parsec-se-driver tpm-provider /tmp/parsec-se-driver/ci/ci.sh
+        run: docker run -v $(pwd):/tmp/parsec-se-driver -w /tmp/parsec-se-driver ghcr.io/parallaxsecond/parsec-service-test-all /tmp/parsec-se-driver/ci/ci.sh
