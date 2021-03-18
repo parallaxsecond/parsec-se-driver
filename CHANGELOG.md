@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.5.0](https://github.com/parallaxsecond/parsec-se-driver/tree/0.5.0) (2021-03-18)
+
+[Full Changelog](https://github.com/parallaxsecond/parsec-se-driver/compare/0.4.0...0.5.0)
+
+**Implemented enhancements:**
+
+- Add changelog file [\#16](https://github.com/parallaxsecond/parsec-se-driver/pull/16) ([ionut-arm](https://github.com/ionut-arm))
+
+**Fixed bugs:**
+
+- Test cross-compilation [\#21](https://github.com/parallaxsecond/parsec-se-driver/issues/21)
+- Check on the CI that Parsec is actually called [\#19](https://github.com/parallaxsecond/parsec-se-driver/issues/19)
+- Check if Parsec was indeed used [\#20](https://github.com/parallaxsecond/parsec-se-driver/pull/20) ([hug-dev](https://github.com/hug-dev))
+
+**Closed issues:**
+
+- Update Mbed TLS to version 2.25.0 [\#17](https://github.com/parallaxsecond/parsec-se-driver/issues/17)
+
+**Merged pull requests:**
+
+- Prepare for tag 0.5.0 [\#24](https://github.com/parallaxsecond/parsec-se-driver/pull/24) ([hug-dev](https://github.com/hug-dev))
+- Use the uploaded container [\#23](https://github.com/parallaxsecond/parsec-se-driver/pull/23) ([hug-dev](https://github.com/hug-dev))
+- Update dependencies for Mbed TLS 2.25.0 [\#22](https://github.com/parallaxsecond/parsec-se-driver/pull/22) ([hug-dev](https://github.com/hug-dev))
+
 ## [0.4.0](https://github.com/parallaxsecond/parsec-se-driver/tree/0.4.0) (2020-10-20)
 
 [Full Changelog](https://github.com/parallaxsecond/parsec-se-driver/compare/0.3.1...0.4.0)
