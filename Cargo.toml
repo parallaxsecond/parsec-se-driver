@@ -16,9 +16,9 @@ name = "parsec_se_driver"
 crate-type = ["staticlib"]
 
 [dependencies]
-parsec-client = { git = "https://github.com/parallaxsecond/parsec-client-rust", rev = "f2470712b2cbf854a7b2e5036f1c8c7cf889dfa6" }
+parsec-client = "0.12.0"
 lazy_static = "1.4.0"
-psa-crypto = { git = "https://github.com/parallaxsecond/rust-psa-crypto", rev = "4da203be2d4ec0705fb87234468612011b452861", default-features = false, features = ["interface"] }
+psa-crypto = { version = "0.8.0", default-features = false, features = ["interface"] }
 log = "0.4.11"
 env_logger = { version = "0.7.1", optional = true }
 
