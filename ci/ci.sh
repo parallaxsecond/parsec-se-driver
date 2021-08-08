@@ -14,7 +14,7 @@ then
 	git clone https://github.com/ARMmbed/mbedtls.git
 fi
 pushd mbedtls
-git checkout mbedtls-2.25.0
+git checkout mbedtls-2.27.0
 popd
 
 #################
@@ -32,12 +32,12 @@ fi
 # C Tests #
 ###########
 
-# Start the TPM server
+cp /tmp/NVChip .
+# Start and configure TPM server
 tpm_server &
 sleep 5
-tpm2_startup -c 2>/dev/null
-tpm2_takeownership -o tpm_pass 2>/dev/null
-sleep 5
+# Ownership has already been taken with "tpm_pass".
+tpm2_startup -T mssim
 
 # Create the Parsec socket directory. This must be the default one.
 mkdir /run/parsec
