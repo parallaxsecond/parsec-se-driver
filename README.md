@@ -22,9 +22,15 @@ from the PSA Cryptography API implementation.
 
 The build scripts have a dependency on `libclang`, which is needed on the system.
 
-Version `0.4.0` of this SE driver has been tested with Mbed Crypto from the GitHub Mbed TLS
-repository version 2.22.0. Version `0.5.0` of this SE driver has been tested with Mbed Crypto from
-the GitHub Mbed TLS repository version 2.25.0.
+## Compatibility with Mbed TLS
+
+The following tuples have been tested together.
+
+| Parsec SE driver version | Mbed Crypto/Mbed TLS version |
+|--------------------------|------------------------------|
+| `0.4.0`                  | `2.22.0`                     |
+| `0.5.0`                  | `2.25.0`                     |
+| `0.6.0`                  | `2.27.0`                     |
 
 ## Notice
 
