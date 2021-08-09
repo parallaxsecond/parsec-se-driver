@@ -31,7 +31,7 @@ unsafe extern "C" fn p_sign(
         Err(e) => return e.into(),
     };
     let signature = match PARSEC_BASIC_CLIENT.read().unwrap().psa_sign_hash(
-        key_slot_to_key_name(key_slot),
+        &key_slot_to_key_name(key_slot),
         std::slice::from_raw_parts(p_hash, hash_length),
         alg,
     ) {
@@ -59,7 +59,7 @@ unsafe extern "C" fn p_verify(
         Err(e) => return e.into(),
     };
     match PARSEC_BASIC_CLIENT.read().unwrap().psa_verify_hash(
-        key_slot_to_key_name(key_slot),
+        &key_slot_to_key_name(key_slot),
         std::slice::from_raw_parts(p_hash, hash_length),
         alg,
         std::slice::from_raw_parts(p_signature, signature_length),

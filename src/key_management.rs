@@ -54,7 +54,7 @@ unsafe extern "C" fn p_import(
     };
     *bits = attributes.bits;
     match PARSEC_BASIC_CLIENT.read().unwrap().psa_import_key(
-        key_slot_to_key_name(key_slot),
+        &key_slot_to_key_name(key_slot),
         std::slice::from_raw_parts(data, data_length),
         attributes,
     ) {
@@ -78,7 +78,7 @@ unsafe extern "C" fn p_generate(
     match PARSEC_BASIC_CLIENT
         .read()
         .unwrap()
-        .psa_generate_key(key_slot_to_key_name(key_slot), attributes)
+        .psa_generate_key(&key_slot_to_key_name(key_slot), attributes)
     {
         Ok(_) => PSA_SUCCESS,
         Err(e) => client_error_to_psa_status(e),
@@ -93,7 +93,7 @@ unsafe extern "C" fn p_destroy(
     match PARSEC_BASIC_CLIENT
         .read()
         .unwrap()
-        .psa_destroy_key(key_slot_to_key_name(key_slot))
+        .psa_destroy_key(&key_slot_to_key_name(key_slot))
     {
         Ok(_) => PSA_SUCCESS,
         Err(e) => client_error_to_psa_status(e),
@@ -110,7 +110,7 @@ unsafe extern "C" fn p_export_public(
     let key_material = match PARSEC_BASIC_CLIENT
         .read()
         .unwrap()
-        .psa_export_public_key(key_slot_to_key_name(key))
+        .psa_export_public_key(&key_slot_to_key_name(key))
     {
         Ok(key) => key,
         Err(e) => return client_error_to_psa_status(e),
