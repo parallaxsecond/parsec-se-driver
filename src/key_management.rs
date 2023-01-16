@@ -10,13 +10,13 @@ use psa_crypto::types::key::Attributes;
 use std::convert::TryFrom;
 
 pub(super) static METHODS: psa_drv_se_key_management_t = psa_drv_se_key_management_t {
-    p_allocate: Some(p_allocate),
-    p_validate_slot_number: Some(p_validate_slot_number),
-    p_import: Some(p_import),
-    p_generate: Some(p_generate),
-    p_destroy: Some(p_destroy),
-    p_export: None,
-    p_export_public: Some(p_export_public),
+    private_p_allocate: Some(p_allocate),
+    private_p_validate_slot_number: Some(p_validate_slot_number),
+    private_p_import: Some(p_import),
+    private_p_generate: Some(p_generate),
+    private_p_destroy: Some(p_destroy),
+    private_p_export: None,
+    private_p_export_public: Some(p_export_public),
 };
 
 unsafe extern "C" fn p_allocate(

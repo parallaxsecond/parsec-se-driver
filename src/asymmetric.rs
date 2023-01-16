@@ -10,10 +10,10 @@ use psa_crypto::types::algorithm::AsymmetricSignature;
 use std::convert::TryFrom;
 
 pub(super) static METHODS: psa_drv_se_asymmetric_t = psa_drv_se_asymmetric_t {
-    p_sign: Some(p_sign),
-    p_verify: Some(p_verify),
-    p_encrypt: None,
-    p_decrypt: None,
+    private_p_sign: Some(p_sign),
+    private_p_verify: Some(p_verify),
+    private_p_encrypt: None,
+    private_p_decrypt: None,
 };
 
 unsafe extern "C" fn p_sign(
