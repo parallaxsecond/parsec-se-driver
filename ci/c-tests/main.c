@@ -53,7 +53,7 @@ int main()
 			             PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(PSA_KEY_PERSISTENCE_DEFAULT, (psa_key_location_t)0x000001));
 	psa_set_key_usage_flags(&key_pair_attributes, PSA_KEY_USAGE_SIGN_HASH | PSA_KEY_USAGE_VERIFY_HASH);
 	psa_set_key_algorithm(&key_pair_attributes, alg);
-	psa_set_key_type(&key_pair_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP_R1));
+	psa_set_key_type(&key_pair_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_bits(&key_pair_attributes, 256U);
 
 	status = psa_generate_key(&key_pair_attributes, &key_pair_handle);
