@@ -32,7 +32,7 @@ fi
 # C Tests #
 ###########
 
-cp /tmp/NVChip .
+cp /tmp/ondisk/NVChip .
 # Start and configure TPM server
 tpm_server &
 sleep 5
