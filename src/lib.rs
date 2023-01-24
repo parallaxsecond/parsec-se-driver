@@ -67,15 +67,15 @@ lazy_static! {
 /// Parsec SE Driver structure
 #[no_mangle]
 pub static mut PARSEC_SE_DRIVER: psa_drv_se_t = psa_drv_se_t {
-    hal_version: 5,
-    persistent_data_size: 0,
-    p_init: Some(p_init),
-    key_management: &key_management::METHODS as *const psa_drv_se_key_management_t,
-    mac: ptr::null(),
-    cipher: ptr::null(),
-    aead: ptr::null(),
-    asymmetric: &asymmetric::METHODS as *const psa_drv_se_asymmetric_t,
-    derivation: ptr::null(),
+    private_hal_version: 5,
+    private_persistent_data_size: 0,
+    private_p_init: Some(p_init),
+    private_key_management: &key_management::METHODS as *const psa_drv_se_key_management_t,
+    private_mac: ptr::null(),
+    private_cipher: ptr::null(),
+    private_aead: ptr::null(),
+    private_asymmetric: &asymmetric::METHODS as *const psa_drv_se_asymmetric_t,
+    private_derivation: ptr::null(),
 };
 
 unsafe extern "C" fn p_init(

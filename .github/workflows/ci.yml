@@ -22,7 +22,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Download Mbed Crypto
-        run: git clone -b mbedtls-2.27.0 https://github.com/ARMmbed/mbedtls.git
+        run: git clone -b v3.0.0 https://github.com/ARMmbed/mbedtls.git
       - name: armv7-unknown-linux-gnueabihf
         run: |
           rustup target add armv7-unknown-linux-gnueabihf

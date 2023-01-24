@@ -6,7 +6,7 @@ script:
 # Compile Mbed Crypto for the test application
   - git clone https://github.com/ARMmbed/mbedtls.git
   - pushd mbedtls
-  - git checkout mbedtls-2.27.0
+  - git checkout v3.0.0
   - ./scripts/config.py crypto
   - ./scripts/config.py set MBEDTLS_PSA_CRYPTO_SE_C
   - SHARED=1 make

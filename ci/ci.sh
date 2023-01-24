@@ -14,7 +14,7 @@ then
 	git clone https://github.com/ARMmbed/mbedtls.git
 fi
 pushd mbedtls
-git checkout mbedtls-2.27.0
+git checkout v3.0.0
 popd
 
 #################
@@ -32,7 +32,7 @@ fi
 # C Tests #
 ###########
 
-cp /tmp/NVChip .
+cp /tmp/ondisk/NVChip .
 # Start and configure TPM server
 tpm_server &
 sleep 5
