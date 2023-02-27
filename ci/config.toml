@@ -18,13 +18,12 @@ timeout = 3000 # in milliseconds
 auth_type = "UnixPeerCredentials"
 
 [[key_manager]]
-name = "on-disk-manager"
-manager_type = "OnDisk"
-# Warning: this path is used in the CI script
-store_path = "/tmp/mappings"
+name = "sqlite-manager"
+manager_type = "SQLite"
+sqlite_db_path = "./kim-mappings/sqlite/sqlite-key-info-manager.sqlite3"
 
 [[provider]]
 provider_type = "Tpm"
-key_info_manager = "on-disk-manager"
+key_info_manager = "sqlite-manager"
 tcti = "mssim"
 owner_hierarchy_auth = "hex:74706d5f70617373" # "tpm_pass" in hex

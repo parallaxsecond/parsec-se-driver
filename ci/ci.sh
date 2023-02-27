@@ -32,7 +32,8 @@ fi
 # C Tests #
 ###########
 
-cp /tmp/NVChip .
+# Copy the TPM state for the SQLite KIM
+cp /tmp/sqlite/NVChip .
 # Start and configure TPM server
 tpm_server &
 sleep 5
@@ -43,7 +44,7 @@ tpm2_startup -T mssim
 mkdir /run/parsec
 
 # Install and run Parsec
-git clone --branch 0.6.0 https://github.com/parallaxsecond/parsec
+git clone --branch 1.0.0 https://github.com/parallaxsecond/parsec
 pushd parsec
 cargo build --features tpm-provider --release
 ./target/release/parsec -c ../ci/config.toml &
@@ -65,9 +66,8 @@ MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
 
 # Check that Parsec was called by checking if the service contains the key
-# this is done by checking if the mappings folder is empty.
-# Maybe use parsec-tool instead?
-[ "$(ls -A /tmp/mappings)" ]
+cargo install --locked parsec-tool
+[ "$(RUST_LOG=error parsec-tool list-keys | wc -l)" -ne "0" ]
 
 # Kill Parsec for clean logs
 pkill parsec
