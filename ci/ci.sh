@@ -66,9 +66,8 @@ MBEDTLS_INCLUDE_DIR=$(pwd)/mbedtls/include cargo build --release
 make -C ci/c-tests run MBED_TLS_PATH=$(pwd)/mbedtls
 
 # Check that Parsec was called by checking if the service contains the key
-# this is done by checking if the mappings folder is empty.
-# Maybe use parsec-tool instead?
-[ "$(ls -A /tmp/mappings)" ]
+cargo install --locked parsec-tool
+[ "$(RUST_LOG=error parsec-tool list-keys | wc -l)" -ne "0" ]
 
 # Kill Parsec for clean logs
 pkill parsec
