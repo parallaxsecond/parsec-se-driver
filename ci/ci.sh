@@ -32,7 +32,8 @@ fi
 # C Tests #
 ###########
 
-cp /tmp/NVChip .
+# Copy the TPM state for the SQLite KIM
+cp /tmp/sqlite/NVChip .
 # Start and configure TPM server
 tpm_server &
 sleep 5
@@ -43,7 +44,7 @@ tpm2_startup -T mssim
 mkdir /run/parsec
 
 # Install and run Parsec
-git clone --branch 0.6.0 https://github.com/parallaxsecond/parsec
+git clone --branch 1.0.0 https://github.com/parallaxsecond/parsec
 pushd parsec
 cargo build --features tpm-provider --release
 ./target/release/parsec -c ../ci/config.toml &
