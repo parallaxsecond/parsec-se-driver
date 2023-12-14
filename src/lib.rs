@@ -35,6 +35,7 @@
 mod asymmetric;
 mod key_management;
 
+use parsec_client::error::Result;
 use psa_crypto::ffi::{
     psa_drv_se_asymmetric_t, psa_drv_se_context_t, psa_drv_se_key_management_t, psa_drv_se_t,
     psa_key_location_t, psa_key_slot_number_t, psa_status_t,
@@ -57,10 +58,9 @@ use std::ptr;
 use std::sync::RwLock;
 
 lazy_static! {
-    // We do not use "new" directly here because it can fail and we do not want to panic. The
-    // automatic selection of authentication/provider is done in `p_init` so that we can return an
-    // error if there is a problem with that.
-    static ref PARSEC_BASIC_CLIENT: RwLock<BasicClient> = RwLock::new(BasicClient::new_naked());
+    // The automatic selection of authentication/provider is done in `p_init` so that we can return
+    // an error if there is a problem with that.
+    static ref PARSEC_BASIC_CLIENT: RwLock<Result<BasicClient>> = RwLock::new(BasicClient::new_naked());
 }
 
 /// Parsec SE Driver structure
@@ -86,16 +86,26 @@ unsafe extern "C" fn p_init(
     // Ignore if the initialisation failed because the `p_init` function has already been called.
     let _ = env_logger::try_init();
 
-    let mut client = (*PARSEC_BASIC_CLIENT).write().expect("lock poisoned");
+    match (*PARSEC_BASIC_CLIENT)
+        .write()
+        .expect("lock poisoned")
+        .as_mut()
+    {
+        Ok(client) => {
+            if let Err(e) = client.set_default_auth(Some(String::from("Parsec SE Driver"))) {
+                error!("Error setting the default authentication method ({}).", e);
+                return PSA_ERROR_GENERIC_ERROR;
+            }
 
-    if let Err(e) = client.set_default_auth(Some(String::from("Parsec SE Driver"))) {
-        error!("Error setting the default authentication method ({}).", e);
-        return PSA_ERROR_GENERIC_ERROR;
-    }
-
-    if let Err(e) = client.set_default_provider() {
-        error!("Error setting the default provider ({}).", e);
-        return PSA_ERROR_GENERIC_ERROR;
+            if let Err(e) = client.set_default_provider() {
+                error!("Error setting the default provider ({}).", e);
+                return PSA_ERROR_GENERIC_ERROR;
+            }
+        }
+        Err(e) => {
+            error!("Error Setting up the Parsec Client ({}).", e);
+            return PSA_ERROR_GENERIC_ERROR;
+        }
     }
 
     info!("SE Driver initialized");
