@@ -43,7 +43,7 @@ tpm2_startup -T mssim
 mkdir /run/parsec
 
 # Install and run Parsec
-git clone --branch 0.6.0 https://github.com/parallaxsecond/parsec
+git clone --branch 1.3.0 https://github.com/parallaxsecond/parsec
 pushd parsec
 cargo build --features tpm-provider --release
 ./target/release/parsec -c ../ci/config.toml &
