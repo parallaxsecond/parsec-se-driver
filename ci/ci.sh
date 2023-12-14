@@ -39,9 +39,6 @@ sleep 5
 # Ownership has already been taken with "tpm_pass".
 tpm2_startup -T mssim
 
-# Create the Parsec socket directory. This must be the default one.
-mkdir /run/parsec
-
 # Install and run Parsec
 git clone --branch 1.3.0 https://github.com/parallaxsecond/parsec
 pushd parsec
