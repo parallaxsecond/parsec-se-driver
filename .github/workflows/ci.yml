@@ -25,6 +25,7 @@ jobs:
         run: git clone -b v3.0.0 https://github.com/ARMmbed/mbedtls.git
       - name: armv7-unknown-linux-gnueabihf
         run: |
+          sudo apt update
           rustup target add armv7-unknown-linux-gnueabihf
           sudo apt install -y gcc-multilib
           sudo apt install -y gcc-arm-linux-gnueabihf
