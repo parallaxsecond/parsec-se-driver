@@ -30,11 +30,16 @@ unsafe extern "C" fn p_sign(
         Ok(alg) => alg,
         Err(e) => return e.into(),
     };
-    let signature = match PARSEC_BASIC_CLIENT.read().unwrap().psa_sign_hash(
-        &key_slot_to_key_name(key_slot),
-        std::slice::from_raw_parts(p_hash, hash_length),
-        alg,
-    ) {
+    let signature = match PARSEC_BASIC_CLIENT
+        .read()
+        .unwrap()
+        .as_ref()
+        .unwrap()
+        .psa_sign_hash(
+            &key_slot_to_key_name(key_slot),
+            std::slice::from_raw_parts(p_hash, hash_length),
+            alg,
+        ) {
         Ok(signature) => signature,
         Err(e) => return client_error_to_psa_status(e),
     };
@@ -58,12 +63,17 @@ unsafe extern "C" fn p_verify(
         Ok(alg) => alg,
         Err(e) => return e.into(),
     };
-    match PARSEC_BASIC_CLIENT.read().unwrap().psa_verify_hash(
-        &key_slot_to_key_name(key_slot),
-        std::slice::from_raw_parts(p_hash, hash_length),
-        alg,
-        std::slice::from_raw_parts(p_signature, signature_length),
-    ) {
+    match PARSEC_BASIC_CLIENT
+        .read()
+        .unwrap()
+        .as_ref()
+        .unwrap()
+        .psa_verify_hash(
+            &key_slot_to_key_name(key_slot),
+            std::slice::from_raw_parts(p_hash, hash_length),
+            alg,
+            std::slice::from_raw_parts(p_signature, signature_length),
+        ) {
         Ok(_) => PSA_SUCCESS,
         Err(e) => client_error_to_psa_status(e),
     }
